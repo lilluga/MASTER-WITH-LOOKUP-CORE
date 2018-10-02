@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+<style>
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color:     #aed6f1    ;
+    
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color:    #2874a6   ;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover {
+    background-color:     #f0f3f4   ;
+}
+</style>
+  
+</h:head>
+<body>
+<ul>
+  <li><a class="active" href="index.xhtml">SALE</a></li>
+  <li><a href="item.xhtml">ITEM</a></li>
+  <li><a href="itemType.xhtml">ITEM TYPE</a></li>
+</ul>
+
+	<br />
+	<br />
+	<h:form>
+<p:commandButton value="Report POI" ajax="false"
+			action="#{tblView.download()}">
+			  			
+			<f:setPropertyActionListener value="#{tblView.selectedSale}"
+				target="#{tblView.selectedSale}" />
+		</p:commandButton>
+		
+		<p:commandButton value="Report JASPER" ajax="false"
+			action="#{tblView.jasperReport()}">
+
+
+		</p:commandButton>
+
+		<p:commandButton value="Report FOP" ajax="false"
+			action="#{tblView.FOP()}">
+
+
+		</p:commandButton>
+	</h:form>
+
+	<br />
+	<h:form id="datatable">
+<p:outputLabel for="from" value="From:" />
+        <p:calendar id="from" value="#{tblView.from}" maxdate="#{currentDate}" />
+        <p:outputLabel for="to" value="To:"  />
+        <p:calendar id="to" value="#{tblView.to}" maxdate="#{currentDate}" />
+        
+        <p:commandButton value="FILTER" ajax="false"
+			action="#{tblView.filterBydate()}">
+
+
+		</p:commandButton>	
+        <br/>
+
+		<p:dataTable id="eventsDT" var="sale" value="#{tblView.sale}"
+			>
+			<f:facet name="header">
+			
+            SALE
+        </f:facet>
+ 
+
+			<p:column headerText="DATE">
+				<h:outputText value="#{sale.date}" />
+			</p:column>
+			<p:column headerText="NAME">
+				<h:outputText value="#{sale.name}" />
+			</p:column>
+			<p:column headerText="ADDRESS">
+				<h:outputText value="#{sale.address}" />
+			</p:column>
+			<p:column headerText="TOTAL PRICE">
+				<h:outputText value="#{sale.totalprice}" />
+			</p:column>
+
+
+
+			<f:facet name="footer">
+				<p:commandButton value="Add Sale" type="button"
+					onclick="PF('add').show();" update="itmslctdtbl">
+				</p:commandButton>
+			</f:facet>
+
+		</p:dataTable>
+	</h:form>
+
+	<br />
+	<br />
+
+
+	
+
+	<br />
+	<br />
+
+
+
+	
+
+
+	<p:confirmDialog header="WARNING" showEffect="fade" hideEffect="fade"
+		widgetVar="delete" message="Are you sure you want to delete?">
+		<h:form id="deletesale">
+			<h:inputHidden value="#{tblView.selectedSale.id}" />
+			<p:commandButton value="Yes" action="#{tblView.deleteSalecontrol()}"
+				oncomplete="PF('delete').hide();" update="datatable" />
+			<p:commandButton value="No" oncomplete="PF('delete').hide();" />
+		</h:form>
+	</p:confirmDialog>
+
+
+
+
+
+
+
+
+
+
+
+	<h:form id="itmslctdtbl">
+		<p:dialog header="Sale" widgetVar="add" id="dlgslctditem">
+
+			<h:panelGrid columns="2" style="width: 100%">
+
+				<h:outputText value="Date:" />
+				<p:column>
+					<h:outputText value="#{currentDate}">
+						<f:convertDateTime pattern="MM/dd/yyyy" type="date" />
+					</h:outputText>
+				</p:column>
+
+				<h:outputText value="Name:" />
+				<p:column>
+					<h:inputHidden value="#{tblView.selectedSale.id}" id="sale_id" />
+
+
+					<p:inputText value="#{tblView.selectedSale.name}" />
+
+				</p:column>
+				<h:outputText value="Address:" />
+				<p:column>
+
+					<p:inputText value="#{tblView.selectedSale.address}" />
+
+				</p:column>
+
+				<h:outputText value="Choose from items:" />
+
+				<p:column>
+					<h:selectOneMenu id="selectAvailableitems"
+						value="#{tblView.selectedItem.id}" >
+
+						<f:selectItems value="#{tblView.item}" itemLabel="#{item.name}"
+							var="item" itemValue="#{item.id}" />
+
+					</h:selectOneMenu>
+				</p:column>
+<br/>
+				<br />
+				<p:column>
+					<p:commandButton value="Enter" action="#{tblView.onAvailDrop()}"
+						update="itemSelectedtable totalprice" />
+				</p:column>
+
+				<h:outputText value="Selected items:" />
+
+
+
+				<p:dataTable id="itemSelectedtable" var="droppeditem"
+					value="#{tblView.droppedItem}" tableStyle="width:auto" >
+
+
+
+					<h:inputHidden value="#{droppeditem.id}" />
+
+					<p:column headerText="Name">
+						<h:outputText value="#{droppeditem.name}" />
+
+					</p:column>
+
+					<p:column headerText="Price">
+						<h:outputText value="#{droppeditem.price}" />
+
+					</p:column>
+					
+					<p:column headerText="Void">
+						<p:commandButton value="REMOVE" action="#{tblView.voidItem()}" update=":itmslctdtbl:itemSelectedtable :itmslctdtbl:totalprice" >
+						<f:setPropertyActionListener value="#{droppeditem}" target="#{tblView.cbItem}"></f:setPropertyActionListener>
+</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+				<h:outputText value="Total price:" />
+				<p:column>
+					<h:outputText value="#{tblView.total}" id="totalprice" />
+				</p:column>
+				<br />
+				<p:column>
+					<p:commandButton value="Enter" action="#{tblView.addSalecontrol()}"
+						oncomplete="PF('add').hide();" update="datatable" >
+						
+						  </p:commandButton>
+				</p:column>
+
+
+			</h:panelGrid>
+
+		</p:dialog>
+
+	</h:form>
+	
+
+	
+
+
+	<p:dialog header="Sale" widgetVar="update">
+		<h:form id="updatesale">
+			<h:panelGrid columns="2" style="width: 100%">
+
+				<h:outputText value="Sale Name:" />
+				<p:column>
+
+					<p:inputText value="#{tblView.selectedSale.name}" />
+
+				</p:column>
+				<h:outputText value="Sale Address:" />
+				<p:column>
+
+					<p:inputText value="#{tblView.selectedSale.address}" />
+
+				</p:column>
+				<h:inputHidden value="#{tblView.selectedSale.id}" />
+
+
+				<br />
+
+				<p:column>
+					<p:commandButton value="Enter"
+						action="#{tblView.updateSalecontrol()}"
+						oncomplete="PF('update').hide();" update="datatable" />
+				</p:column>
+			</h:panelGrid>
+		</h:form>
+
+	</p:dialog>
+
+
+	
+
+	
+
+
+</body>
+</html>

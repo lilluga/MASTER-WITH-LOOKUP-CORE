@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+<style>
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color:     #aed6f1    ;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color:    #2874a6   ;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover {
+    background-color:     #f0f3f4   ;
+}
+</style>
+</h:head> 
+<body> 
+<ul>
+  <li><a class="active" href="index.xhtml">SALE</a></li>
+  <li><a href="item.xhtml">ITEM</a></li>
+  <li><a href="itemType.xhtml">ITEM TYPE</a></li>
+</ul>
+  <br/>
+  <br/>
+  
+  <h:form id="datatableitemtype">
+		<p:dataTable var="itemType" value="#{tblView.itemType}" id="itemType">
+			<f:facet name="header">
+            ITEM TYPE
+        </f:facet>
+			<p:column headerText="ID">
+				<h:outputText value="#{itemType.id}" id="itemType_id" />
+			</p:column>
+			<p:column headerText="Name">
+
+				<h:outputText value="#{itemType.name}" />
+			</p:column>
+
+
+
+			<p:column headerText="Commands">
+
+
+
+
+				<p:commandButton value="Edit" update="updateItemtype"
+					oncomplete="PF('updateItemtype').show();">
+					<f:setPropertyActionListener value="#{itemType}"
+						target="#{tblView.selectedItemtype}" />
+				</p:commandButton>
+
+				<p:commandButton value="Delete" update="deleteItemtype"
+					onclick="PF('deleteItemtype').show();">
+					<f:setPropertyActionListener value="#{itemType}"
+						target="#{tblView.selectedItemtype}" />
+				</p:commandButton>
+
+
+			</p:column>
+
+
+
+
+			<f:facet name="footer">
+				<p:commandButton update="addItemtype" value="Add Item Type"
+					oncomplete="PF('addItemtype').show()" />
+			</f:facet>
+		</p:dataTable>
+
+	</h:form>
+	
+	<p:confirmDialog header="WARNING" showEffect="fade" hideEffect="fade"
+		widgetVar="deleteItemtype" message="Are you sure you want to delete?">
+		<h:form id="deleteItemtype">
+			<h:inputHidden value="#{tblView.selectedItemtype.id}" />
+			<p:commandButton value="Yes"
+				action="#{tblView.deleteItemtypeControl()}"
+				oncomplete="PF('deleteItemtype').hide();" update="datatableitemtype" />
+			<p:commandButton value="No" oncomplete="PF('deleteItemtype').hide();" />
+		</h:form>
+	</p:confirmDialog>
+	<p:dialog header="Item Type" widgetVar="addItemtype">
+		
+		<h:form id="addItemtype">
+			<h:panelGrid columns="2" style="width: 100%">
+
+
+				<h:outputText value="Item Type Name:" />
+				<p:column>
+					<h:inputHidden value="#{tblView.selectedItemtype.id}"
+						id="itemType_id" />
+
+
+					<p:inputText value="#{tblView.selectedItemtype.name}" />
+
+				</p:column>
+
+				<br />
+				<p:column>
+					<p:commandButton value="Enter"
+						action="#{tblView.addItemtypeControl()}"
+						oncomplete="PF('addItemtype').hide();" update="datatableitemtype" />
+				</p:column>
+			</h:panelGrid>
+		</h:form>
+
+	</p:dialog>
+	<p:dialog header="itemType" widgetVar="updateItemtype">
+
+		<h:form id="updateItemtype">
+			<h:panelGrid columns="2" style="width: 100%">
+
+				<h:outputText value="Item Type Name" />
+				<p:column>
+
+					<p:inputText value="#{tblView.selectedItemtype.name}" />
+
+				</p:column>
+
+				<h:inputHidden value="#{tblView.selectedItemtype.id}" />
+
+
+				<br />
+
+				<p:column>
+					<p:commandButton value="Enter"
+						action="#{tblView.updateItemtypeControl()}"
+						oncomplete="PF('updateItemtype').hide();"
+						update="datatableitemtype" />
+				</p:column>
+			</h:panelGrid>
+		</h:form>
+
+	</p:dialog>
+</body> 
+</html>
